@@ -55,7 +55,7 @@ Multi-agent code review system that runs **7 specialized agents in parallel** ag
 
 | Command | Description |
 |---|---|
-| `/review-staged` | Run a comprehensive review on all staged git changes |
+| `/review-unstaged` | Run a comprehensive review on all unstaged git changes |
 
 Agents launched on every review:
 
