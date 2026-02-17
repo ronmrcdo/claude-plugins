@@ -1,83 +1,83 @@
 ---
-name: review-staged
-description: Run a comprehensive code review on staged git changes using multiple specialized agents (performance, QA, structure, best practices, security, accessibility, code splitting)
+name: review-unstaged
+description: Run a comprehensive code review on unstaged git changes using multiple specialized agents (performance, QA, structure, best practices, security, accessibility, code splitting)
 allowed-tools: Bash(git diff:*), Bash(git status:*), Read, Glob, Grep, Task
 ---
 
-You are a code review orchestrator. Run a comprehensive multi-agent review on the currently staged git changes.
+You are a code review orchestrator. Run a comprehensive multi-agent review on the current unstaged git changes.
 
 ## Process
 
-### Step 1: Get Staged Changes
+### Step 1: Get Unstaged Changes
 
-Run the following to identify what's staged:
+Run the following to identify what's changed:
 
 ```bash
-git diff --cached --name-only
+git diff --name-only
 ```
 
-If no files are staged, tell the user:
-> No staged changes found. Stage your changes with `git add` and try again.
+If no files have changes, tell the user:
+> No unstaged changes found. Make some changes and try again.
 
 Then stop.
 
 ### Step 2: Detect Tech Stack
 
-Categorize the staged files:
+Categorize the changed files:
 
 - **Frontend files**: `.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, `.css`, `.scss`
 - **Backend files**: `.ts`, `.js` (Node.js — when in controller/service/route/middleware directories or importing `express`, `@nestjs`, `fastify`, `koa`, `prisma`, `typeorm`, `sequelize`, `mongoose`), `.py`, `.go`, `.java`, `.rb`, `.rs`, `.php`, `.cs`
 - **Shared/Config files**: `.json`, `.yaml`, `.yml`, `.env`, config files
 
 Set a flag:
-- `has_frontend` = true if any frontend files are staged
-- `has_backend` = true if any backend files are staged
+- `has_frontend` = true if any frontend files have changes
+- `has_backend` = true if any backend files have changes
 
 ### Step 3: Get Full Diff
 
-Get the staged diff for context:
+Get the unstaged diff for context:
 
 ```bash
-git diff --cached
+git diff
 ```
 
-Read each staged file in full using the Read tool for complete context.
+Read each changed file in full using the Read tool for complete context.
 
 ### Step 4: Run Review Agents
 
-Launch all applicable agents in parallel using the Task tool. Pass the staged diff and file contents as context to each agent.
+Launch all applicable agents in parallel using the Task tool. Pass the unstaged diff and file contents as context to each agent.
 
 **Always run these agents (all stacks):**
 
 1. **Performance Profiler** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the performance-profiler agent. Analyze the following staged changes for performance issues. [include diff and file contents]. Follow the performance-profiler agent specification.
+   > You are the performance-profiler agent. Analyze the following unstaged changes for performance issues. [include diff and file contents]. Follow the performance-profiler agent specification.
 
 2. **QA Specification Engineer** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the qa-spec-engineer agent. Analyze the following staged changes for test coverage gaps. [include diff and file contents]. Follow the qa-spec-engineer agent specification.
+   > You are the qa-spec-engineer agent. Analyze the following unstaged changes for test coverage gaps. [include diff and file contents]. Follow the qa-spec-engineer agent specification.
 
 3. **Structural Completeness** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the structural-completeness agent. Analyze the following staged changes for structural integrity. [include diff and file contents]. Follow the structural-completeness agent specification.
+   > You are the structural-completeness agent. Analyze the following unstaged changes for structural integrity. [include diff and file contents]. Follow the structural-completeness agent specification.
 
 4. **Best Practices** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the best-practices agent. Analyze the following staged changes against coding standards. [include diff and file contents]. Follow the best-practices agent specification.
+   > You are the best-practices agent. Analyze the following unstaged changes against coding standards. [include diff and file contents]. Follow the best-practices agent specification.
 
 5. **Security Reviewer** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the security-reviewer agent. Analyze the following staged changes for security vulnerabilities. [include diff and file contents]. Follow the security-reviewer agent specification.
+   > You are the security-reviewer agent. Analyze the following unstaged changes for security vulnerabilities. [include diff and file contents]. Follow the security-reviewer agent specification.
 
-**Only run when frontend files are staged (`has_frontend` = true):**
+**Only run when frontend files have changes (`has_frontend` = true):**
 
 6. **Accessibility Reviewer** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the accessibility-reviewer agent. Analyze the following staged frontend changes for accessibility issues. [include diff and file contents]. Follow the accessibility-reviewer agent specification.
+   > You are the accessibility-reviewer agent. Analyze the following unstaged frontend changes for accessibility issues. [include diff and file contents]. Follow the accessibility-reviewer agent specification.
 
 7. **Code Splitting & Reusability** — Launch with `subagent_type: "general-purpose"` and the prompt:
-   > You are the code-splitting-reusability agent. Analyze the following staged frontend changes for modularity and reuse. [include diff and file contents]. Follow the code-splitting-reusability agent specification.
+   > You are the code-splitting-reusability agent. Analyze the following unstaged frontend changes for modularity and reuse. [include diff and file contents]. Follow the code-splitting-reusability agent specification.
 
 ### Step 5: Compile Results
 
 After all agents complete, compile their reports into a single unified review:
 
 ```
-# Code Review — Staged Changes
+# Code Review — Unstaged Changes
 
 **Files reviewed**: [count]
 **Stack**: [Frontend | Backend | Full-stack]
