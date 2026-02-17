@@ -170,40 +170,86 @@ For other stacks: apply the equivalent industry-standard best practices.
 
 Structure your review output exactly as follows:
 
+### PR Header (always shown)
+
 ```
-## File Reviews
-
-### `<filename>`
-**Line <n>:** <issue description>
-> suggestion: <fix or improvement>
-
-### `<filename>`
-...
-
-## Strengths
-- <what's done well>
-
-## Overall Assessment
-<final thoughts>
-
----
-
 # PR Review: #<number> — <title>
 **Author:** <author>
 **Rating:** <score>/100
+```
 
-## Summary
-<brief overview of the PR>
+### Summary (always shown)
 
-### Metrics
-- Files Reviewed: X
-- Critical Issues: X
-- Code Quality Score: X/100
-- Security Concerns: X
+A 2–4 sentence overview of what the PR does, its scope, and your high-level assessment.
+
+### Category Sections (conditional — omit if no findings)
+
+Only include a category section when there are findings for it. Do NOT render empty sections or "no issues found" messages. Sections are ordered by severity:
+
+1. `## 🔒 Security Issues` — ID prefix: `SEC_*`
+2. `## ⚡ Performance Issues` — ID prefix: `PERF_*`
+3. `## 🧹 Code Quality Issues` — ID prefix: `QUAL_*`
+4. `## 🧪 Testing Gaps` — ID prefix: `TEST_*`
+5. `## ♻️ Reusability & Code Splitting` — ID prefix: `REUSE_*` *(frontend PRs only)*
+6. `## 🔄 State Management Issues` — ID prefix: `STATE_*` *(frontend PRs only)*
+7. `## 📝 Documentation Gaps` — ID prefix: `DOCS_*`
+
+**Frontend-only sections:** Reusability & Code Splitting and State Management Issues are only included when the PR contains `.tsx`, `.jsx`, `.vue`, `.svelte`, or `.html` files.
+
+Each finding within a category uses this format:
+
+```
+### 1. `<file>:<line>` — <ID_CODE>
+
+**Problem:** <description of the issue>
+**Fix:** <description of the solution>
+
+\`\`\`<lang>
+// Before
+<problematic code from the PR diff>
+
+// After
+<corrected code>
+\`\`\`
+```
+
+**ID code rules:**
+- Use `UPPER_SNAKE_CASE` with the category prefix (e.g., `SEC_SQL_INJECT`, `PERF_N_PLUS_1`, `QUAL_DEAD_CODE`, `TEST_MISSING_EDGE`)
+- Findings within each section are numbered sequentially starting at 1
+- Before/After blocks must show actual code from the PR diff
+
+### Strengths (always shown)
+
+List at least 2 positive callouts highlighting well-written code, good patterns, or smart decisions.
+
+```
+## 💪 Strengths
+- <what's done well>
+- <another positive callout>
+```
+
+### Metrics (always shown)
+
+```
+## 📊 Metrics
+
+| Category                    | Findings |
+|-----------------------------|----------|
+| 🔒 Security                | X        |
+| ⚡ Performance              | X        |
+| 🧹 Code Quality            | X        |
+| 🧪 Testing                 | X        |
+| ♻️ Reusability              | X        |
+| 🔄 State Management        | X        |
+| 📝 Documentation           | X        |
+| **Total**                   | **X**    |
+
+**Rating:** X/100
 ```
 
 **Output rules:**
-- Line-level suggestions must reference actual line numbers from the changed files
-- Only include files that have issues in the File Reviews section
+- Line references must point to actual line numbers from the changed files
+- Before/After code blocks must use code from the PR diff — never fabricate examples
+- Omit category sections entirely when no findings exist for that category
 - The Rating reflects overall code quality, security, correctness, and maintainability
-- Code Quality Score in Metrics should match the Rating
+- Metrics table includes all categories; use `0` for categories with no findings
