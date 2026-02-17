@@ -1,0 +1,75 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ronmrcdo-plugin",
+  "owner": {
+    "name": "ronmrcdo",
+    "email": "ronmercaodaa.dev@gmail.com"
+  },
+  "metadata": {
+    "description": "Comprehensive claude code plugins.",
+    "version": "0.1.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "commit-commands",
+      "source": "./plugins/commit-commands",
+      "description": "Workflow for git including commit, push, pr and a specialized command to review PR",
+      "version": "1.0.0",
+      "author": {
+        "name": "ronmrcdo",
+        "email": "ronmercaodaa.dev@gmail.com"
+      },
+      "category": "productivity",
+      "keywords": [
+        "git",
+        "workflow",
+        "productivity"
+      ],
+      "tags": [
+        "git",
+        "productivity",
+        "automation",
+        "workflow"
+      ]
+    },
+    {
+      "name": "accessibility-compliance",
+      "source": "./plugins/a11y-compliance",
+      "description": "An accessibility compliance plugin specialized in a11y auditing",
+      "version": "1.0.0",
+      "author": {
+        "name": "ronmrcdo",
+        "email": "ronmercaodaa.dev@gmail.com"
+      },
+      "category": "audit",
+      "keywords": [
+        "a11y",
+        "wcg",
+        "aria"
+      ],
+      "tags": [
+        "a11y",
+        "audit"
+      ]
+    },
+    {
+      "name": "code-reviewer",
+      "source": "./plugins/code-reviewer",
+      "description": "Collection of agents specialized in reviewing the code.",
+      "version": "1.0.0",
+      "author": {
+        "name": "ronmrcdo",
+        "email": "ronmercaodaa.dev@gmail.com"
+      },
+      "category": "reviewer",
+      "keywords": [
+        "review"
+      ],
+      "tags": [
+        "review",
+        "audit"
+      ]
+    }
+  ]
+}
