@@ -190,40 +190,37 @@ Only include a category section when there are findings for it. Do NOT render em
 2. `## ⚡ Performance Issues` — ID prefix: `PERF_*`
 3. `## 🧹 Code Quality Issues` — ID prefix: `QUAL_*`
 4. `## 🧪 Testing Gaps` — ID prefix: `TEST_*`
-5. `## ♻️ Reusability & Code Splitting` — ID prefix: `REUSE_*` *(frontend PRs only)*
-6. `## 🔄 State Management Issues` — ID prefix: `STATE_*` *(frontend PRs only)*
+5. `## ♻️ Reusability & Code Splitting` — ID prefix: `REUSE_*` (frontend PRs only)
+6. `## 🔄 State Management Issues` — ID prefix: `STATE_*` (frontend PRs only)
 7. `## 📝 Documentation Gaps` — ID prefix: `DOCS_*`
 
-**Frontend-only sections:** Reusability & Code Splitting and State Management Issues are only included when the PR contains `.tsx`, `.jsx`, `.vue`, `.svelte`, or `.html` files.
+Frontend-only sections: Reusability & Code Splitting and State Management Issues are only included when the PR contains `.tsx`, `.jsx`, `.vue`, `.svelte`, or `.html` files.
 
 Each finding within a category uses this format:
 
 ```
 ### 1. `<file>:<line>` — <ID_CODE>
 
-**Problem:** <description of the issue>
-**Fix:** <description of the solution>
+<one-line problem description>
 
-\`\`\`<lang>
-// Before
-<problematic code from the PR diff>
-
-// After
-<corrected code>
+\`\`\`diff
+- <problematic code from the PR diff>
++ <corrected code>
 \`\`\`
 ```
 
-**ID code rules:**
+Rules for findings:
+- Keep descriptions to a single short sentence — let the diff speak for itself
+- Do NOT use bold or italic formatting in findings
+- Use `diff` as the code block language so `-` lines render red and `+` lines render green
+- Prefix every removed line with `- ` and every added line with `+ ` (space after the symbol)
+- Unchanged context lines (if needed for clarity) have no prefix
 - Use `UPPER_SNAKE_CASE` with the category prefix (e.g., `SEC_SQL_INJECT`, `PERF_N_PLUS_1`, `QUAL_DEAD_CODE`, `TEST_MISSING_EDGE`)
 - Findings within each section are numbered sequentially starting at 1
-- Before/After blocks must show actual code from the PR diff
-
-### Strengths (always shown)
-
-List at least 2 positive callouts highlighting well-written code, good patterns, or smart decisions.
+- Diff blocks must show actual code from the PR diff — never fabricate examples
 
 ```
-## 💪 Strengths
+## Strengths
 - <what's done well>
 - <another positive callout>
 ```
@@ -247,9 +244,8 @@ List at least 2 positive callouts highlighting well-written code, good patterns,
 **Rating:** X/100
 ```
 
-**Output rules:**
+Output rules:
 - Line references must point to actual line numbers from the changed files
-- Before/After code blocks must use code from the PR diff — never fabricate examples
 - Omit category sections entirely when no findings exist for that category
 - The Rating reflects overall code quality, security, correctness, and maintainability
 - Metrics table includes all categories; use `0` for categories with no findings
