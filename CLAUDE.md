@@ -11,7 +11,7 @@ This is a **Claude Code plugin marketplace** — a specification-driven collecti
 ```
 .claude-plugin/marketplace.json    # Central plugin registry (3 plugins)
 plugins/
-  commit-commands/commands/        # Git workflow commands (commit-push-pr, review-pr, clean-branches)
+  commit-commands/commands/        # Git workflow commands (commit-push-pr, review-pr, clean-branches, daily-standup)
   code-reviewer/
     commands/review-staged.md      # Orchestrator that spawns 7 parallel review agents
     agents/                        # 7 specialized review agents (performance, qa, structure, best-practices, security, a11y, code-splitting)
