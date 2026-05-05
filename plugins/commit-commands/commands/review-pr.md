@@ -2,7 +2,7 @@
 name: review-pr
 description: Review a GitHub PR for security issues, anti-patterns, best practices, and optimization
 argument-hint: <PR_NUMBER>
-allowed-tools: Bash(gh:*), Bash(git:*), Read, Glob, Grep
+allowed-tools: Bash(gh:*), Bash(git:*), Read, Glob, Grep, AskUserQuestion
 ---
 
 You are a code reviewer. Perform a thorough code review of PR #$ARGUMENTS.
@@ -46,9 +46,80 @@ gh pr diff $ARGUMENTS
 
 Output the structured review following the **Output Format** below.
 
-**Important:** Do NOT use `gh pr review`, `gh pr comment`, or any command that posts to GitHub. Output the review to the terminal only.
+After printing the review, proceed to Step 5 to optionally post it to GitHub.
 
-### Step 5: Cleanup
+### Step 5: Interactive Review Posting
+
+Walk the user through two staged prompts so they can selectively turn findings into inline review comments and submit the overall review.
+
+#### 5a. Stage 1 — pick findings to post as inline comments
+
+Build an internal list of every finding from the review just printed, keyed by `<file>:<line>` and ID code (e.g. `SEC_SQL_INJECT`). If the list is empty, skip to 5b.
+
+Use `AskUserQuestion` with `multiSelect: true` to let the user pick which findings to post. Constraints:
+- Options must be 2–4 per call. If there are more than 4 findings, batch into successive `AskUserQuestion` calls of up to 4 options each.
+- Each option `label` is `<ID> — <file>:<line>`; the option `description` is the one-line problem statement from the finding.
+- The user may select none in any batch; accumulate selections across batches.
+
+#### 5b. Stage 2 — pick the review action
+
+Use `AskUserQuestion` with `multiSelect: false` and exactly these three options:
+
+| Label | Description |
+| --- | --- |
+| Approve | Posts an APPROVE review. Body is empty if no findings were selected, otherwise built from the review's Summary section. |
+| Request Changes | Posts a REQUEST_CHANGES review. GitHub requires a non-empty body. |
+| Comment only | Posts a COMMENT review. GitHub requires a non-empty body. |
+
+#### 5c. Body resolution
+
+- If **≥ 1 finding selected**: review body is the Summary section text from the review you printed in Step 4. Each selected finding becomes an inline `comments[]` entry (see 5d).
+- If **0 findings selected** and action is `Approve`: post with empty body.
+- If **0 findings selected** and action is `Request Changes` or `Comment only`: ask via a follow-up `AskUserQuestion` (single-select) with options `Use generated Summary` and `Leave minimal ("Reviewed via /review-pr")`. The user may pick "Other" to type a custom body.
+
+#### 5d. Posting via `gh api`
+
+`gh pr review` does not support per-line inline comments — use the underlying reviews endpoint. First resolve the repo:
+
+```bash
+REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+```
+
+Map the chosen action to a GitHub event: `Approve` → `APPROVE`, `Request Changes` → `REQUEST_CHANGES`, `Comment only` → `COMMENT`. Then post:
+
+```bash
+gh api \
+  --method POST \
+  "repos/$REPO/pulls/$ARGUMENTS/reviews" \
+  -f event=<EVENT> \
+  -f body="<body>" \
+  -F 'comments[][path]=<file>' \
+  -F 'comments[][line]=<line>' \
+  -F 'comments[][body]=<comment-body>'
+```
+
+Repeat the three `comments[]` flags once per selected finding.
+
+Each inline `<comment-body>` is built from the finding so the suggested fix renders as a clickable GitHub `suggestion` block:
+
+```
+<one-line problem description from the finding>
+
+\`\`\`suggestion
+<the `+` lines from the finding's diff block, with the `+ ` prefix stripped>
+\`\`\`
+```
+
+Only the `+` lines from the diff go inside the suggestion block — `-` lines would corrupt the suggestion (GitHub's syntax replaces only the right side of the diff).
+
+After posting, print the review URL (`gh pr view $ARGUMENTS --json url --jq .url`) so the user can jump straight to the submitted review.
+
+#### 5e. Edge cases
+
+- If `gh api` fails (permissions, line not in the PR diff, etc.), surface the error verbatim and skip Step 6 cleanup so the worktree is preserved for retry.
+- If the user cancels at any `AskUserQuestion`, skip posting and proceed to cleanup.
+
+### Step 6: Cleanup
 
 ```bash
 git worktree remove .pr-review --force
