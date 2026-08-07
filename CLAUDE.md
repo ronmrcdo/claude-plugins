@@ -11,10 +11,11 @@ This is a **Claude Code plugin marketplace** — a specification-driven collecti
 ```
 .claude-plugin/marketplace.json    # Central plugin registry (3 plugins)
 plugins/
-  commit-commands/commands/        # Git workflow commands (commit-push-pr, review-pr, clean-branches, daily-standup)
+  commit-commands/commands/        # Git workflow commands (commit-push-pr, commit-push, clean-branches, daily-standup)
   code-reviewer/
-    commands/review-staged.md      # Orchestrator that spawns 7 parallel review agents
-    agents/                        # 7 specialized review agents (performance, qa, structure, best-practices, security, a11y, code-splitting)
+    commands/review-unstaged.md    # Orchestrator that spawns 7 parallel review agents
+    skills/review-github-pr/       # PR-URL-triggered review: gh-only fetch, stack-aware dispatch, verdict
+    agents/                        # 16 agents: 7 staged-changes reviewers + 9 pr-* PR reviewers
   a11y-compliance/
     commands/a11y-audit.md         # Standalone accessibility audit command
     agents/a11y-auditor.md         # WCAG 2.1/2.2 auditor agent
@@ -35,6 +36,20 @@ plugins/
 4. Compiles and deduplicates results into a unified report
 
 All review agents use `model: sonnet` and follow a consistent output format: scope, severity-rated findings (Critical/High/Medium/Low), summary table with `file:line` references, and priority actions.
+
+### GitHub PR Review Pattern
+
+`review-github-pr` is a skill, not a command, so pasting a PR URL is enough to trigger it. It:
+
+1. Parses `owner`/`repo`/`number` from the URL path — never infers the repo from the working directory
+2. Fetches metadata, patch, and full file contents at the head SHA entirely through `gh` — no git, no worktree, no local mutation
+3. Detects the stack by unioning changed-file extensions with manifest dependencies
+4. Dispatches 5–9 `pr-*` agents in one parallel batch, addressed by subagent type
+5. Compiles a deduplicated report and applies a deterministic verdict: any Critical or High finding means Request Changes
+
+The review is read-only in both directions — it never posts to the PR and never writes to disk.
+The `pr-*` agents declare `tools: Read, Grep, Glob` because dispatched agents otherwise inherit
+write tools regardless of the dispatching skill's `allowed-tools`.
 
 ### Tool Scoping Convention
 Commands declare minimal tool permissions in front matter:
