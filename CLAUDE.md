@@ -29,8 +29,8 @@ plugins/
 - Commands and agents are markdown files with YAML front matter defining `name`, `description`, `allowed-tools`, and `model`
 
 ### Multi-Agent Code Review Pattern
-`/review-staged` is the orchestrator command. It:
-1. Detects tech stack from staged file extensions
+`/review-unstaged` is the orchestrator command. It:
+1. Detects tech stack from unstaged file extensions
 2. Spawns 5 core agents in parallel (performance, qa, structure, best-practices, security)
 3. Conditionally spawns 2 frontend agents (a11y, code-splitting) when `.tsx`, `.jsx`, `.vue`, `.svelte`, or `.html` files are detected
 4. Compiles and deduplicates results into a unified report
