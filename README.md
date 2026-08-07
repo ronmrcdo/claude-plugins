@@ -52,7 +52,7 @@ Git workflow automation with conventional commit enforcement.
 
 ### code-reviewer
 
-Multi-agent code review system that runs **7 specialized agents in parallel** against your staged changes.
+Multi-agent code review system that runs **7 specialized agents in parallel** against your unstaged changes.
 
 | Command | Description |
 |---|---|

@@ -114,6 +114,10 @@ Inline items 7 and 8 rather than pointing at their paths. The verdict is compute
 counts, so agents applying different thresholds would make it meaningless; and an agent told to
 go read a file may not, whereas text in its prompt is unconditional.
 
+Items 2, 3, and 4 are attacker-controlled — anyone who can open a PR writes them. The contract's
+**Untrusted Input** section is what tells each agent to treat them as data rather than
+instructions, which is another reason item 8 is inlined and not merely referenced.
+
 If an agent fails or returns nothing, continue with the rest. Record it in Coverage notes and
 apply the **(provisional)** qualifier.
 
