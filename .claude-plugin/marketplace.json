@@ -15,7 +15,7 @@
       "name": "commit-commands",
       "source": "./plugins/commit-commands",
       "description": "Workflow for git including commit, push, PR creation, branch cleanup, and daily standup summaries",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "ronmrcdo",
         "email": "ronmercaodaa.dev@gmail.com"
@@ -57,7 +57,7 @@
       "name": "code-reviewer",
       "source": "./plugins/code-reviewer",
       "description": "Multi-agent code review for local changes and GitHub pull requests",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "ronmrcdo",
         "email": "ronmercaodaa.dev@gmail.com"
