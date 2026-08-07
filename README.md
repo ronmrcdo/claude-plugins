@@ -42,8 +42,9 @@ Git workflow automation with conventional commit enforcement.
 | Command | Description |
 |---|---|
 | `/commit-push-pr` | Commit staged changes with conventional commits, push, and create a PR |
-| `/review-pr <PR_NUMBER>` | Review a GitHub PR for security, anti-patterns, and best practices |
+| `/commit-push` | Commit and push changes without creating a PR |
 | `/clean-branches` | Delete local branches that are merged or have lost their remote tracking |
+| `/daily-standup` | Generate a daily standup message from your GitHub PR activity |
 
 **Commit format:** `type(scope): subject` where type is one of `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `style`, `perf`.
 
@@ -73,6 +74,20 @@ Additional agents launched when frontend files are detected (`.tsx`, `.jsx`, `.v
 |---|---|
 | Accessibility Reviewer | WCAG 2.1 compliance, ARIA correctness, keyboard navigation |
 | Code Splitting & Reusability | Component extraction, lazy loading, bundle optimization |
+
+| Skill | Description |
+|---|---|
+| `review-github-pr` | Paste a GitHub PR URL for a stack-aware multi-agent review and an approve / request-changes recommendation |
+
+`review-github-pr` fires when you paste a GitHub pull request URL — no slash command needed. It
+reads the PR entirely through `gh` (no clone, fetch, or worktree), detects the tech stack from
+changed files and manifest dependencies, and dispatches 5–9 specialized agents in parallel:
+
+**Always:** `pr-correctness`, `pr-security`, `pr-performance`, `pr-test-coverage`, `pr-integration`
+**Stack-conditional:** `pr-frontend`, `pr-accessibility` (frontend), `pr-data-layer` (SQL/ORM), `pr-infra` (Docker/CI/Terraform/k8s)
+
+The verdict is deterministic — any Critical or High finding means Request Changes. The review is
+read-only: nothing is ever posted to the PR.
 
 ---
 

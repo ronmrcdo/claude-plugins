@@ -14,7 +14,7 @@
     {
       "name": "commit-commands",
       "source": "./plugins/commit-commands",
-      "description": "Workflow for git including commit, push, pr and a specialized command to review PR",
+      "description": "Workflow for git including commit, push, PR creation, branch cleanup, and daily standup summaries",
       "version": "1.0.0",
       "author": {
         "name": "ronmrcdo",
@@ -56,7 +56,7 @@
     {
       "name": "code-reviewer",
       "source": "./plugins/code-reviewer",
-      "description": "Collection of agents specialized in reviewing the code.",
+      "description": "Multi-agent code review for local changes and GitHub pull requests",
       "version": "1.0.0",
       "author": {
         "name": "ronmrcdo",
@@ -64,7 +64,9 @@
       },
       "category": "reviewer",
       "keywords": [
-        "review"
+        "review",
+        "pull-request",
+        "github"
       ],
       "tags": [
         "review",
