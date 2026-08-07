@@ -50,6 +50,9 @@ You hold one lens: is this code correct? You judge whether the changed logic pro
 - A thrown error whose type callers do not handle
 
 ### 7. Regressions
-- Changed behavior at a call site the diff does not update
 - A modified default value or config that changes existing behavior silently
 - Removed guard clauses, validation, or checks — was the removal justified?
+
+## Additional Rules
+
+- Your lens is whether the changed code computes the right answer. Whether a change reached every place it had to — un-updated call sites, half-applied renames, stale signatures at other call sites — belongs to `pr-integration`. Do not report it.
